@@ -4,11 +4,14 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Camera, User, Smartphone, Fingerprint, CreditCard, Briefcase, Rocket, Check, Lock } from 'lucide-react';
+import { Camera, User, Smartphone, Fingerprint, CreditCard, Briefcase, Rocket, Check, Lock, ChevronLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { FileUploadZone } from '@/components/FileUploadZone';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuthStore } from '@/lib/auth-store';
+import Link from 'next/link';
+import React from 'react';
 
 export default function Onboarding() {
     const [currentStep, setCurrentStep] = useState(1);
@@ -16,81 +19,92 @@ export default function Onboarding() {
     const [showSuccess, setShowSuccess] = useState(false);
     const router = useRouter();
 
-    const handleStepComplete = () => {
-        // Mark current step as completed
-        setCompletedSteps(prev => [...prev, currentStep]);
+    const login = useAuthStore((state) => state.login);
 
-        // Show success animation
+    const handleStepComplete = (data?: any) => {
+        if (currentStep === 1 && data?.name) {
+            login(data.name, data.mobile || "");
+        }
+        setCompletedSteps(prev => [...prev, currentStep]);
         setShowSuccess(true);
 
-        // Wait for animation, then move to next step
         setTimeout(() => {
             setShowSuccess(false);
-
             if (currentStep < 5) {
                 setCurrentStep(c => c + 1);
-                // Scroll to top smoothly
-                window.scrollTo({ top: 0, behavior: 'smooth' });
             } else {
-                // Final step - redirect to score
                 router.push('/score');
             }
         }, 1500);
     };
 
     const steps = [
-        { id: 1, title: "Basic Information", icon: User, Content: Step1BasicInfo, summary: "Name & Mobile Verified" },
-        { id: 2, title: "Identity Verification", icon: Fingerprint, Content: Step2Identity, summary: "Aadhaar & PAN Verified" },
-        { id: 3, title: "Financial Data", icon: CreditCard, Content: Step3Financial, summary: "Bank Statement Uploaded" },
-        { id: 4, title: "Gig Work Proof", icon: Briefcase, Content: Step4Employment, summary: "Platform Proof Uploaded" },
-        { id: 5, title: "Boosters & Score", icon: Rocket, Content: Step5Boosters, summary: "Ready for calculation" },
+        { id: 1, title: "Basic Information", icon: User, Content: Step1BasicInfo, summary: "Identity Created" },
+        { id: 2, title: "Identity Verification", icon: Fingerprint, Content: Step2Identity, summary: "Documents Verified" },
+        { id: 3, title: "Financial Intelligence", icon: CreditCard, Content: Step3Financial, summary: "Cash Flow Sync'd" },
+        { id: 4, title: "Platform Trust", icon: Briefcase, Content: Step4Employment, summary: "Hustle Verified" },
+        { id: 5, title: "Final Score Boost", icon: Rocket, Content: Step5Boosters, summary: "AI Ready" },
     ];
 
+    const currentStepData = steps[currentStep - 1];
+
     return (
-        <div className="min-h-screen bg-bg-light dark:bg-bg-dark flex flex-col items-center p-6 md:p-12 relative">
+        <div className="min-h-screen bg-background text-foreground flex flex-col items-center p-4 md:p-12 relative overflow-hidden">
+            {/* Background Glows */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary/5 blur-[120px]" />
+                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-accent/5 blur-[120px]" />
+            </div>
+
             {/* Success Overlay */}
             <AnimatePresence>
                 {showSuccess && (
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.8 }}
-                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[100] flex items-center justify-center bg-[#020617]/40 backdrop-blur-md"
                     >
                         <motion.div
-                            initial={{ y: 20 }}
-                            animate={{ y: 0 }}
-                            className="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-2xl flex flex-col items-center gap-4 max-w-sm mx-4"
+                            initial={{ scale: 0.8, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            className="bg-white rounded-[40px] p-12 flex flex-col items-center gap-6 max-w-sm mx-4 shadow-[0_40px_80px_rgba(0,0,0,0.2)] relative overflow-hidden"
                         >
-                            <motion.div
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
-                                transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                                className="w-20 h-20 bg-success rounded-full flex items-center justify-center"
-                            >
-                                <Check className="w-10 h-10 text-white" strokeWidth={3} />
-                            </motion.div>
-                            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Step {currentStep} Complete!</h3>
-                            <p className="text-gray-500 dark:text-gray-400 text-center">{steps[currentStep - 1].summary}</p>
+                            <div className="absolute inset-0 bg-gradient-to-br from-white via-blue-50 to-white opacity-80" />
+                            <div className="relative z-10 w-24 h-24 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center shadow-lg shadow-primary/30 animate-pulse">
+                                <Check className="w-12 h-12 text-white" strokeWidth={4} />
+                            </div>
+                            <div className="relative z-10 text-center">
+                                <h3 className="text-3xl font-heading font-black text-[#020617] mb-2 tracking-tight">Step Complete!</h3>
+                                <div className="px-4 py-1.5 bg-success/10 rounded-full border border-success/20 inline-block">
+                                    <p className="text-success font-black uppercase tracking-[0.2em] text-[10px]">{currentStepData.summary}</p>
+                                </div>
+                            </div>
                         </motion.div>
                     </motion.div>
                 )}
             </AnimatePresence>
 
-            <div className="w-full max-w-2xl">
-                <header className="mb-8 flex items-center justify-between">
-                    <h1 className="font-bold text-2xl text-gray-900 dark:text-white">Get Started</h1>
-                    <div className="flex items-center gap-2">
-                        <span className="text-sm text-gray-500 font-medium">Step {currentStep} of 5</span>
-                        <div className="flex gap-1">
+            <div className="w-full max-w-3xl relative z-10">
+                <header className="mb-12 flex items-center justify-between">
+                    <div>
+                        <Link href="/" className="flex items-center gap-2 text-gray-500 hover:text-primary transition-colors mb-4 group">
+                            <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                            <span className="text-[10px] font-black uppercase tracking-widest">Back to Home</span>
+                        </Link>
+                        <h1 className="font-heading font-black text-4xl text-foreground tracking-tight">Onboarding</h1>
+                    </div>
+                    <div className="text-right">
+                        <div className="text-3xl font-heading font-black text-foreground">{currentStep}<span className="text-gray-300 text-xl">/5</span></div>
+                        <div className="flex gap-1.5 mt-2 justify-end">
                             {steps.map((step) => (
                                 <div
                                     key={step.id}
                                     className={cn(
-                                        "w-2 h-2 rounded-full transition-all duration-300",
-                                        completedSteps.includes(step.id) ? "bg-success w-3" :
-                                            step.id === currentStep ? "bg-primary w-4" :
-                                                "bg-gray-200 dark:bg-gray-700"
+                                        "h-1.5 rounded-full transition-all duration-500",
+                                        completedSteps.includes(step.id) ? "bg-primary w-6" :
+                                            step.id === currentStep ? "bg-primary w-10 shadow-sm border border-primary" :
+                                                "bg-gray-200 w-4"
                                     )}
                                 />
                             ))}
@@ -98,69 +112,42 @@ export default function Onboarding() {
                     </div>
                 </header>
 
-                <div className="space-y-6">
-                    {steps.map((step) => {
-                        const isActive = currentStep === step.id;
-                        const isCompleted = completedSteps.includes(step.id);
-                        const isLocked = currentStep < step.id;
-
-                        return (
-                            <div
-                                key={step.id}
-                                className={cn(
-                                    "bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm border transition-all duration-500",
-                                    isActive ? "ring-2 ring-primary border-transparent shadow-xl shadow-primary/10" : "border-gray-100 dark:border-gray-700",
-                                    isLocked && "opacity-60 grayscale-[0.5]"
-                                )}
-                            >
-                                {/* Step Header */}
-                                <div
-                                    className="p-4 flex items-center justify-between cursor-pointer"
-                                    onClick={() => isCompleted && setCurrentStep(step.id)}
-                                >
-                                    <div className="flex items-center gap-4">
-                                        <div className={cn(
-                                            "w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300",
-                                            isCompleted ? "bg-success text-white" : isActive ? "bg-primary text-white" : "bg-gray-100 dark:bg-slate-700 text-gray-400"
-                                        )}>
-                                            {isCompleted ? <Check className="w-5 h-5" /> : (
-                                                isActive ? <step.icon className="w-5 h-5" /> : <span className="font-bold">{step.id}</span>
-                                            )}
-                                        </div>
-                                        <div>
-                                            <h3 className={cn("font-bold text-lg", isLocked ? "text-gray-500" : "text-gray-900 dark:text-white")}>
-                                                {step.title}
-                                            </h3>
-                                            {isCompleted && (
-                                                <p className="text-xs text-success font-medium flex items-center gap-1">
-                                                    {step.summary}
-                                                </p>
-                                            )}
-                                        </div>
-                                    </div>
-                                    {isLocked && <Lock className="w-4 h-4 text-gray-400" />}
-                                    {isActive && <div className="text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded-lg">IN PROGRESS</div>}
+                {/* Current Step Display - No Scrolling */}
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={currentStep}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.4 }}
+                        className="rounded-[32px] overflow-hidden border border-primary/10 bg-white shadow-[0_20px_60px_rgba(0,102,255,0.08)]"
+                    >
+                        {/* Step Header */}
+                        <div className="p-8 flex items-center justify-between border-b border-gray-100">
+                            <div className="flex items-center gap-6">
+                                <div className="w-16 h-16 rounded-2xl flex items-center justify-center bg-primary/5 text-primary shadow-sm border border-primary/10">
+                                    {React.createElement(currentStepData.icon, { className: "w-8 h-8" })}
                                 </div>
-
-                                {/* Step Content Content */}
-                                <AnimatePresence>
-                                    {isActive && (
-                                        <motion.div
-                                            initial={{ height: 0, opacity: 0 }}
-                                            animate={{ height: "auto", opacity: 1 }}
-                                            exit={{ height: 0, opacity: 0 }}
-                                            transition={{ duration: 0.3 }}
-                                        >
-                                            <div className="px-6 pb-6 pt-2 border-t border-gray-100 dark:border-gray-700">
-                                                <step.Content onNext={handleStepComplete} />
-                                            </div>
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
+                                <div>
+                                    <h3 className="font-heading font-black text-2xl tracking-tight uppercase text-foreground">
+                                        {currentStepData.title}
+                                    </h3>
+                                    <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest mt-1">
+                                        Step {currentStep} of {steps.length}
+                                    </p>
+                                </div>
                             </div>
-                        )
-                    })}
-                </div>
+                            <div className="text-[10px] font-black text-primary bg-primary/10 px-4 py-2 rounded-lg tracking-widest uppercase">
+                                Syncing
+                            </div>
+                        </div>
+
+                        {/* Step Content */}
+                        <div className="p-8">
+                            {React.createElement(currentStepData.Content, { onNext: handleStepComplete })}
+                        </div>
+                    </motion.div>
+                </AnimatePresence>
             </div>
         </div>
     );
@@ -168,45 +155,119 @@ export default function Onboarding() {
 
 const step1Schema = z.object({
     name: z.string().min(1, "Name is required"),
-    mobile: z.string().regex(/^[0-9]{10}$/, "Valid mobile number required")
+    dob: z.string().min(1, "Date of Birth is required"),
+    address: z.string().min(5, "Valid address is required"),
+    workerType: z.string().min(1, "Worker type is required"),
+    email: z.string().email("Valid email is required"),
+    mobile: z.string().regex(/^[0-9]{10}$/, "Valid mobile number required"),
+    altMobile: z.string().regex(/^[0-9]{10}$/, "Valid mobile number required").optional().or(z.literal('')),
 });
 
-function Step1BasicInfo({ onNext }: { onNext: () => void }) {
-    const { register, handleSubmit, formState: { errors } } = useForm({
-        resolver: zodResolver(step1Schema)
-    });
+function Step1BasicInfo({ onNext }: { onNext: (data: any) => void }) {
+    const { register, handleSubmit, formState: { errors } } = useForm({ resolver: zodResolver(step1Schema) });
 
     return (
-        <form onSubmit={handleSubmit(onNext)} className="flex flex-col gap-6">
-            <div className="space-y-4">
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Full Name</label>
+        <form onSubmit={handleSubmit(onNext)} className="flex flex-col gap-6 mt-4">
+            {/* Row 1: Name & DOB */}
+            {/* Row 1: Name & DOB */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-2">Full Legal Name</label>
                     <input
                         {...register('name')}
-                        placeholder="e.g. Rajesh Kumar"
-                        className="w-full p-4 rounded-xl bg-gray-50 dark:bg-slate-700 border border-transparent focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                        placeholder="e.g. John Doe"
+                        className="w-full p-4 rounded-2xl bg-white border border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-bold text-foreground placeholder:text-gray-300 shadow-sm"
                     />
-                    {errors.name && <span className="text-error text-xs ml-1">{errors.name.message as string}</span>}
+                    {errors.name && <span className="text-error text-[10px] font-black uppercase ml-2">{errors.name.message as string}</span>}
                 </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Mobile Number</label>
+                <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-2">Date of Birth</label>
+                    <input
+                        {...register('dob')}
+                        type="date"
+                        className="w-full p-4 rounded-2xl bg-white border border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-bold text-foreground placeholder:text-gray-300 shadow-sm"
+                    />
+                    {errors.dob && <span className="text-error text-[10px] font-black uppercase ml-2">{errors.dob.message as string}</span>}
+                </div>
+            </div>
+
+            {/* Address */}
+            <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-2">Permanent Address</label>
+                <textarea
+                    {...register('address')}
+                    placeholder="House No, Street, City, State, Pincode"
+                    rows={2}
+                    className="w-full p-4 rounded-2xl bg-white border border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-bold text-foreground placeholder:text-gray-300 resize-none shadow-sm"
+                />
+                {errors.address && <span className="text-error text-[10px] font-black uppercase ml-2">{errors.address.message as string}</span>}
+            </div>
+
+            {/* Worker Type */}
+            <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-2">Primary Gig Platform</label>
+                <select
+                    {...register('workerType')}
+                    className="w-full p-4 rounded-2xl bg-white border border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-bold text-foreground placeholder:text-gray-300 shadow-sm"
+                >
+                    <option value="">Select Platform</option>
+                    <option value="swiggy">Swiggy</option>
+                    <option value="zomato">Zomato</option>
+                    <option value="uber">Uber</option>
+                    <option value="ola">Ola</option>
+                    <option value="rapido">Rapido</option>
+                    <option value="blinkit">Blinkit</option>
+                    <option value="dunzo">Dunzo</option>
+                    <option value="porter">Porter</option>
+                    <option value="urban_company">Urban Company</option>
+                    <option value="amazon_flex">Amazon Flex</option>
+                    <option value="other">Other</option>
+                </select>
+                {errors.workerType && <span className="text-error text-[10px] font-black uppercase ml-2">{errors.workerType.message as string}</span>}
+            </div>
+
+            {/* Row 2: Email & Mobiles */}
+            <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-2">Email Address</label>
+                <input
+                    {...register('email')}
+                    type="email"
+                    placeholder="john@example.com"
+                    className="w-full p-4 rounded-2xl bg-white border border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-bold text-foreground placeholder:text-gray-300 shadow-sm"
+                />
+                {errors.email && <span className="text-error text-[10px] font-black uppercase ml-2">{errors.email.message as string}</span>}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-2">Primary Mobile</label>
                     <div className="relative">
-                        <span className="absolute left-4 top-4 text-gray-500 font-medium">+91</span>
+                        <span className="absolute left-5 top-4 text-primary font-black">+91</span>
                         <input
                             {...register('mobile')}
                             type="tel"
                             placeholder="98765 43210"
-                            className="w-full p-4 pl-12 rounded-xl bg-gray-50 dark:bg-slate-700 border border-transparent focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                            className="w-full p-4 pl-14 rounded-2xl bg-white border border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-bold text-foreground placeholder:text-gray-300 shadow-sm"
                         />
-                        <button type="button" className="absolute right-4 top-3 text-xs font-bold text-primary hover:text-indigo-700">
-                            Send OTP
-                        </button>
                     </div>
-                    {errors.mobile && <span className="text-error text-xs ml-1">{errors.mobile.message as string}</span>}
+                    {errors.mobile && <span className="text-error text-[10px] font-black uppercase ml-2">{errors.mobile.message as string}</span>}
+                </div>
+                <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-2">Alternative Mobile (Optional)</label>
+                    <div className="relative">
+                        <span className="absolute left-5 top-4 text-gray-400 font-bold">+91</span>
+                        <input
+                            {...register('altMobile')}
+                            type="tel"
+                            placeholder="98765 43210"
+                            className="w-full p-4 pl-14 rounded-2xl bg-white border border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-bold text-foreground placeholder:text-gray-300 shadow-sm"
+                        />
+                    </div>
                 </div>
             </div>
-            <button type="submit" className="w-full bg-black dark:bg-white text-white dark:text-black py-4 rounded-xl font-bold hover:opacity-90 active:scale-95 transition-all text-sm uppercase tracking-wide">
-                Continue
+
+            <button type="submit" className="w-full bg-primary text-white py-6 rounded-2xl font-black shadow-[0_10px_30px_rgba(0,102,255,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all uppercase tracking-widest mt-4 hover:shadow-[0_15px_40px_rgba(0,102,255,0.4)]">
+                VERIFY & CONTINUE
             </button>
         </form>
     )
@@ -214,37 +275,26 @@ function Step1BasicInfo({ onNext }: { onNext: () => void }) {
 
 function Step2Identity({ onNext }: { onNext: () => void }) {
     return (
-        <div className="flex flex-col gap-6">
-            <div className="space-y-4">
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Aadhaar Number</label>
-                    <div className="flex gap-2">
-                        <input
-                            placeholder="1234 5678 9012"
-                            className="w-full p-4 rounded-xl bg-gray-50 dark:bg-slate-700 border border-transparent focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                        />
-                        <button className="bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-4 rounded-xl text-xs font-bold whitespace-nowrap">
-                            Verify OTP
-                        </button>
+        <div className="flex flex-col gap-8 mt-4">
+            <div className="space-y-6">
+                <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-2">Aadhaar ID</label>
+                    <div className="flex gap-4">
+                        <input placeholder="1234 5678 9012" className="flex-1 p-5 rounded-2xl bg-white border border-gray-300 focus:border-primary outline-none font-bold text-foreground placeholder:text-gray-300 shadow-sm" />
+                        <button className="bg-gray-100 text-foreground px-6 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-gray-200 transition-colors shadow-sm">Verify</button>
                     </div>
                 </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">PAN Number</label>
-                    <input
-                        placeholder="ABCDE1234F"
-                        className="w-full p-4 rounded-xl bg-gray-50 dark:bg-slate-700 border border-transparent focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                    />
+                <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-2">PAN Registry</label>
+                    <input placeholder="ABCDE1234F" className="w-full p-5 rounded-2xl bg-white border border-gray-300 focus:border-primary outline-none font-bold text-foreground uppercase placeholder:text-gray-300 shadow-sm" />
                 </div>
-                <div className="pt-2">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Selfie Verification</label>
-                    <button className="w-full border-2 border-dashed border-gray-300 dark:border-gray-600 p-4 rounded-xl flex items-center justify-center gap-2 text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors">
-                        <Camera className="w-5 h-5" />
-                        Take Selfie
-                    </button>
-                </div>
+                <button className="w-full h-32 border-2 border-dashed border-gray-300 rounded-2xl flex flex-col items-center justify-center gap-2 text-gray-500 hover:border-primary/50 hover:bg-primary/5 transition-all bg-white">
+                    <Camera className="w-8 h-8" />
+                    <span className="text-[10px] font-black uppercase tracking-widest">Biometric Selfie Capture</span>
+                </button>
             </div>
-            <button onClick={onNext} className="w-full bg-black dark:bg-white text-white dark:text-black py-4 rounded-xl font-bold hover:opacity-90 active:scale-95 transition-all text-sm uppercase tracking-wide">
-                Continue
+            <button onClick={onNext} className="w-full bg-primary text-white py-6 rounded-2xl font-black shadow-[0_10px_30px_rgba(0,102,255,0.3)] uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98]">
+                NEXT PROTOCOL
             </button>
         </div>
     )
@@ -252,19 +302,18 @@ function Step2Identity({ onNext }: { onNext: () => void }) {
 
 function Step3Financial({ onNext }: { onNext: () => void }) {
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-8 mt-4">
             <div className="space-y-6">
-                <div>
-                    <p className="text-sm font-medium mb-3">Upload Bank Statement</p>
+                <div className="p-8 rounded-3xl bg-primary/5 border border-primary/20 text-center">
+                    <p className="text-sm font-bold text-gray-500 mb-6">Securely sync your primary bank statement</p>
                     <FileUploadZone type="bank-statement" accept={{ 'application/pdf': ['.pdf'], 'text/csv': ['.csv'] }} cameraEnabled={true} />
                 </div>
-
-                <button className="w-full py-3 bg-blue-50 dark:bg-blue-900/10 text-blue-600 dark:text-blue-400 rounded-xl text-sm font-semibold border border-blue-100 dark:border-blue-900/30">
-                    Connect Email for Auto-Bills
+                <button className="w-full py-4 bg-white border border-gray-200 rounded-2xl text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-gray-50 transition-colors">
+                    <Fingerprint className="w-4 h-4" /> Connect via Account Aggregator
                 </button>
             </div>
-            <button onClick={onNext} className="w-full bg-black dark:bg-white text-white dark:text-black py-4 rounded-xl font-bold hover:opacity-90 active:scale-95 transition-all text-sm uppercase tracking-wide">
-                Continue
+            <button onClick={onNext} className="w-full bg-primary text-white py-6 rounded-2xl font-black uppercase tracking-widest shadow-[0_10px_30px_rgba(0,102,255,0.2)] hover:scale-[1.02] active:scale-[0.98]">
+                ANALYZE CASHFLOW
             </button>
         </div>
     )
@@ -272,25 +321,23 @@ function Step3Financial({ onNext }: { onNext: () => void }) {
 
 function Step4Employment({ onNext }: { onNext: () => void }) {
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-8 mt-4">
             <div className="space-y-6">
-                <p className="text-sm text-gray-500">Upload screenshot of your Rapido/Swiggy/Zomato earnings dashboard.</p>
-
-                <FileUploadZone type="gig-dashboard" accept={{ 'image/*': ['.png', '.jpg', '.jpeg'] }} cameraEnabled={true} />
-
-                <div className="flex items-center gap-4 my-2">
-                    <div className="h-px bg-gray-200 dark:bg-gray-700 flex-1" />
-                    <span className="text-xs text-gray-400">OR</span>
-                    <div className="h-px bg-gray-200 dark:bg-gray-700 flex-1" />
+                <div className="p-6 rounded-2xl bg-white border border-gray-200 border-l-4 border-l-primary shadow-sm">
+                    <p className="text-[11px] font-bold text-gray-500 leading-relaxed uppercase">Upload recent dashboard screenshots from your gig platforms (Swiggy, Uber, etc.)</p>
                 </div>
-
-                <button className="w-full py-3 bg-gray-50 dark:bg-slate-700 text-gray-700 dark:text-gray-300 rounded-xl text-sm font-semibold border border-gray-200 dark:border-gray-600 flex items-center justify-center gap-2">
-                    <Smartphone className="w-4 h-4" />
-                    Connect Platform API
+                <FileUploadZone type="gig-dashboard" accept={{ 'image/*': ['.png', '.jpg', '.jpeg'] }} cameraEnabled={true} />
+                <div className="flex items-center gap-6">
+                    <div className="h-px bg-gray-200 flex-1" />
+                    <span className="text-[10px] font-black text-gray-500 uppercase">Direct Link</span>
+                    <div className="h-px bg-gray-200 flex-1" />
+                </div>
+                <button className="w-full py-4 bg-white border border-gray-300 rounded-2xl text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-gray-50 transition-colors shadow-sm">
+                    <Rocket className="w-4 h-4 text-primary" /> Rapid Connect API
                 </button>
             </div>
-            <button onClick={onNext} className="w-full bg-black dark:bg-white text-white dark:text-black py-4 rounded-xl font-bold hover:opacity-90 active:scale-95 transition-all text-sm uppercase tracking-wide">
-                Continue
+            <button onClick={onNext} className="w-full bg-primary text-white py-6 rounded-2xl font-black uppercase tracking-widest shadow-[0_10px_30px_rgba(0,102,255,0.2)] hover:scale-[1.02] active:scale-[0.98]">
+                VERIFY HUSTLE
             </button>
         </div>
     )
@@ -298,28 +345,28 @@ function Step4Employment({ onNext }: { onNext: () => void }) {
 
 function Step5Boosters({ onNext }: { onNext: () => void }) {
     return (
-        <div className="flex flex-col gap-6">
-            <div className="space-y-3">
+        <div className="flex flex-col gap-8 mt-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
-                    { icon: "📧", title: "Connect Email", desc: "Auto-verify bills", points: "+15 pts" },
-                    { icon: "💼", title: "LinkedIn", desc: "Job verification", points: "+10 pts" },
-                    { icon: "📈", title: "Investment App", desc: "Groww/Zerodha", points: "+20 pts" },
-                    { icon: "📍", title: "Verify Location", desc: "Address stability", points: "+5 pts" }
+                    { icon: "📧", title: "Email Sync", desc: "Auto-bills", pts: "+15" },
+                    { icon: "🔗", title: "WhatsApp", desc: "VPA History", pts: "+12" },
+                    { icon: "💼", title: "LinkedIn", desc: "Network Score", pts: "+10" },
+                    { icon: "📍", title: "Location", desc: "Geo-verify", pts: "+8" }
                 ].map((item, i) => (
-                    <div key={i} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-slate-700/50 rounded-xl border border-transparent hover:border-primary/30 cursor-pointer transition-all">
-                        <div className="flex items-center gap-3">
-                            <span className="text-xl">{item.icon}</span>
+                    <div key={i} className="flex items-center justify-between p-5 bg-white border border-gray-200 rounded-2xl group hover:border-primary hover:shadow-lg cursor-pointer transition-all shadow-sm">
+                        <div className="flex items-center gap-4">
+                            <span className="text-xl group-hover:scale-125 transition-transform text-foreground">{item.icon}</span>
                             <div>
-                                <p className="font-semibold text-sm">{item.title}</p>
-                                <p className="text-xs text-gray-500">{item.desc}</p>
+                                <p className="font-black text-xs uppercase text-foreground">{item.title}</p>
+                                <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">{item.desc}</p>
                             </div>
                         </div>
-                        <span className="text-xs font-bold text-success bg-success/10 px-2 py-1 rounded-full">{item.points}</span>
+                        <span className="text-[10px] font-black text-primary bg-primary/10 px-2 py-0.5 rounded-full">{item.pts}</span>
                     </div>
                 ))}
             </div>
-            <button onClick={onNext} className="w-full bg-gradient-to-r from-primary to-indigo-600 text-white py-4 rounded-xl font-bold shadow-lg shadow-primary/30 hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2">
-                Calculate Score Now <Rocket className="w-4 h-4 fill-current" />
+            <button onClick={onNext} className="w-full bg-gradient-to-r from-primary via-accent to-blue-600 text-white py-6 rounded-2xl font-black uppercase tracking-[0.3em] shadow-[0_10px_40px_rgba(0,102,255,0.4)] hover:scale-[1.02] flex items-center justify-center gap-4 active:scale-[0.98]">
+                CALCULATE FINAL SCORE <Rocket className="w-5 h-5" />
             </button>
         </div>
     )

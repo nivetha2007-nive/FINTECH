@@ -2,253 +2,128 @@
 
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, Sparkles, TrendingUp, Zap, ArrowRight, Share2, Download, ShieldCheck, User as UserIcon, Smartphone, CreditCard, Briefcase } from 'lucide-react';
+import { CheckCircle2, Sparkles, TrendingUp, Zap, ArrowRight, Share2, Download, ShieldCheck, User as UserIcon, Smartphone, CreditCard, Briefcase, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useScoreStore } from '@/lib/store';
 import { useAuthStore } from '@/lib/auth-store';
+import Image from 'next/image';
 
 export default function LoanSuccess() {
     const router = useRouter();
     const [showConfetti, setShowConfetti] = useState(true);
-    const [currentQuote, setCurrentQuote] = useState(0);
-    const { total, grade, pillars } = useScoreStore();
+    const { total, grade } = useScoreStore();
     const user = useAuthStore((state) => state.user);
 
-    const quotes = [
-        "Every gig is a step towards financial freedom 🚀",
-        "Your hustle deserves recognition, not rejection 💪",
-        "Building credit, one delivery at a time 📦",
-        "From the streets to success - your journey matters ⭐",
-        "Gig workers are the backbone of India's economy 🇮🇳"
-    ];
-
     useEffect(() => {
-        const interval = setInterval(() => {
-            setCurrentQuote((prev) => (prev + 1) % quotes.length);
-        }, 4000);
-
         const confettiTimer = setTimeout(() => setShowConfetti(false), 5000);
-
-        return () => {
-            clearInterval(interval);
-            clearTimeout(confettiTimer);
-        };
+        return () => clearTimeout(confettiTimer);
     }, []);
 
     const cibilId = `GC-${total}-${grade}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`;
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-slate-950 dark:via-indigo-950 dark:to-slate-900 flex items-center justify-center p-4 md:p-6 relative overflow-hidden">
-            {/* Animated Background Elements */}
+        <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-4 md:p-6 relative overflow-hidden">
+            {/* Background Glows */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <motion.div
-                    animate={{
-                        scale: [1, 1.2, 1],
-                        rotate: [0, 90, 0],
-                        opacity: [0.3, 0.5, 0.3]
-                    }}
-                    transition={{ duration: 20, repeat: Infinity }}
-                    className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-primary/30 to-purple-500/30 rounded-full blur-3xl"
-                />
-                <motion.div
-                    animate={{
-                        scale: [1.2, 1, 1.2],
-                        rotate: [90, 0, 90],
-                        opacity: [0.5, 0.3, 0.5]
-                    }}
-                    transition={{ duration: 15, repeat: Infinity }}
-                    className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-tl from-pink-500/30 to-indigo-500/30 rounded-full blur-3xl"
-                />
+                <div className="absolute top-[-20%] left-[-20%] w-full h-full bg-primary/5 blur-[150px] animate-pulse" />
+                <div className="absolute bottom-[-20%] right-[-20%] w-full h-full bg-accent/5 blur-[150px] animate-pulse" style={{ animationDelay: '2s' }} />
             </div>
 
-            {/* Confetti Effect */}
-            <AnimatePresence>
-                {showConfetti && (
-                    <div className="absolute inset-0 pointer-events-none z-50">
-                        {[...Array(50)].map((_, i) => (
-                            <motion.div
-                                key={i}
-                                initial={{
-                                    x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000),
-                                    y: -20,
-                                    rotate: 0,
-                                    opacity: 1
-                                }}
-                                animate={{
-                                    y: (typeof window !== 'undefined' ? window.innerHeight : 1000) + 20,
-                                    rotate: Math.random() * 360,
-                                    opacity: 0
-                                }}
-                                transition={{
-                                    duration: Math.random() * 3 + 2,
-                                    delay: Math.random() * 2,
-                                    ease: "easeOut"
-                                }}
-                                className="absolute w-2 h-2 rounded-full"
-                                style={{
-                                    backgroundColor: ['#6366F1', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'][Math.floor(Math.random() * 5)]
-                                }}
-                            />
-                        ))}
-                    </div>
-                )}
-            </AnimatePresence>
-
             <motion.div
-                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                initial={{ opacity: 0, scale: 0.9, y: 30 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="w-full max-w-2xl bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl rounded-[2.5rem] shadow-2xl border border-white/50 dark:border-white/10 overflow-hidden relative z-10"
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                className="w-full max-w-3xl bg-white backdrop-blur-3xl rounded-[48px] shadow-[0_20px_60px_rgba(0,102,255,0.1)] border border-primary/10 overflow-hidden relative z-10"
             >
-                {/* Score Certificate Header */}
-                <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 p-8 text-center relative overflow-hidden">
+                {/* Header Section */}
+                <div className="p-12 text-center relative border-b border-gray-100">
                     <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                        className="inline-flex items-center justify-center w-20 h-20 bg-white dark:bg-slate-900 rounded-full mb-4 shadow-xl"
+                        initial={{ scale: 0, rotate: -45 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ delay: 0.3, type: "spring", damping: 15 }}
+                        className="inline-flex items-center justify-center w-24 h-24 bg-primary rounded-[32px] mb-8 shadow-[0_10px_30px_rgba(0,102,255,0.4)] rotate-3"
                     >
-                        <CheckCircle2 className="w-12 h-12 text-indigo-600" strokeWidth={2.5} />
+                        <ShieldCheck className="w-12 h-12 text-white" strokeWidth={2.5} />
                     </motion.div>
 
-                    <motion.h1
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.4 }}
-                        className="text-3xl md:text-4xl font-black text-white mb-2 leading-tight"
-                    >
-                        Success! Your CIBIL <br />Score is Live 🎯
-                    </motion.h1>
+                    <h1 className="text-4xl md:text-6xl font-heading font-black text-foreground mb-4 leading-tight tracking-tight">
+                        CIBIL Score <br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">VERIFIED 🚀</span>
+                    </h1>
 
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.8 }}
-                        className="bg-white/10 backdrop-blur-md rounded-2xl py-3 px-6 inline-block border border-white/20 mt-4"
-                    >
-                        <p className="text-white/70 text-xs font-bold uppercase tracking-widest mb-1">Your Unique Credit ID</p>
-                        <p className="text-2xl font-mono font-black text-white tracking-widest">{cibilId}</p>
-                    </motion.div>
-
-                    {/* Decorative Background Glows */}
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl" />
-                    <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12 blur-xl" />
+                    <div className="bg-gray-50 backdrop-blur-md rounded-2xl py-4 px-8 inline-block border border-gray-200 mt-6 group hover:border-primary/50 transition-colors shadow-sm">
+                        <p className="text-gray-500 text-[10px] font-black uppercase tracking-[0.4em] mb-2">Reference ID</p>
+                        <p className="text-3xl font-mono font-black text-foreground tracking-[0.2em]">{cibilId}</p>
+                    </div>
                 </div>
 
-                <div className="p-6 md:p-8 space-y-6">
-                    {/* Profile Preview Section */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.6 }}
-                        className="bg-gray-50 dark:bg-slate-800/50 rounded-3xl p-6 border border-gray-100 dark:border-white/5"
-                    >
-                        <div className="flex items-center gap-5 mb-6">
-                            <div className="w-16 h-16 bg-gradient-to-tr from-primary to-purple-500 rounded-2xl flex items-center justify-center text-white shadow-lg">
-                                <UserIcon className="w-8 h-8" />
+                <div className="p-10 space-y-10">
+                    {/* User & Loan Status */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="p-8 rounded-[32px] bg-white border border-gray-200 shadow-sm">
+                            <div className="flex items-center gap-5 mb-8">
+                                <div className="w-16 h-16 rounded-2xl overflow-hidden border-2 border-primary/30">
+                                    <Image src="/images/gig-1.png" alt="User" width={64} height={64} className="object-cover h-full w-full" />
+                                </div>
+                                <div>
+                                    <h3 className="text-2xl font-heading font-black text-foreground">{user?.name || 'Rajesh Kumar'}</h3>
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-primary italic">Verified Identity</p>
+                                </div>
                             </div>
-                            <div>
-                                <h3 className="text-xl font-bold text-gray-900 dark:text-white">{user?.name || 'Rajesh Kumar'}</h3>
-                                <div className="flex items-center gap-2 mt-1">
-                                    <span className="text-xs font-bold bg-primary/10 text-primary px-2 py-0.5 rounded-full uppercase tracking-tighter italic">Verified {user?.type || 'Gig Worker'}</span>
-                                    <span className="flex items-center gap-1 text-[10px] text-success font-bold uppercase">
-                                        <ShieldCheck className="w-3 h-3" /> Fully KYC'd
-                                    </span>
+                            <div className="space-y-4">
+                                <div className="flex justify-between text-xs font-bold text-gray-500">
+                                    <span>BANK SYNC</span>
+                                    <span className="text-success uppercase tracking-widest">Active</span>
+                                </div>
+                                <div className="flex justify-between text-xs font-bold text-gray-500">
+                                    <span>PLATFORM TRUST</span>
+                                    <span className="text-success uppercase tracking-widest">Top Tier</span>
+                                </div>
+                                <div className="flex justify-between text-xs font-bold text-gray-500">
+                                    <span>CREDIT LIMIT</span>
+                                    <span className="text-foreground">₹{(total * 100).toLocaleString()}</span>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                            <div className="bg-white dark:bg-slate-800 p-3 rounded-2xl shadow-sm border border-gray-50 dark:border-white/5 text-center">
-                                <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mx-auto mb-2 text-blue-600">
-                                    <Smartphone className="w-4 h-4" />
+                        <div className="p-8 rounded-[32px] bg-gradient-to-br from-primary via-blue-600 to-accent text-white group overflow-hidden relative shadow-lg">
+                            <div className="absolute -right-10 -top-10 w-32 h-32 bg-white/20 blur-3xl rounded-full" />
+                            <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-80 mb-2">Approved Credit</p>
+                            <h2 className="text-6xl font-heading font-black tracking-tighter mb-6 text-white">₹50,000</h2>
+                            <div className="bg-white/10 p-4 rounded-xl backdrop-blur-sm border border-white/20">
+                                <div className="flex items-center gap-3 text-sm font-black uppercase tracking-widest text-white">
+                                    <Zap className="w-5 h-5 animate-pulse" /> Disbursing...
                                 </div>
-                                <p className="text-[10px] text-gray-400 font-bold uppercase mb-1">Mobile</p>
-                                <p className="text-xs font-bold dark:text-gray-200">Verified</p>
-                            </div>
-                            <div className="bg-white dark:bg-slate-800 p-3 rounded-2xl shadow-sm border border-gray-50 dark:border-white/5 text-center">
-                                <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center mx-auto mb-2 text-purple-600">
-                                    <CreditCard className="w-4 h-4" />
-                                </div>
-                                <p className="text-[10px] text-gray-400 font-bold uppercase mb-1">Bank</p>
-                                <p className="text-xs font-bold dark:text-gray-200">HDFC-4582</p>
-                            </div>
-                            <div className="bg-white dark:bg-slate-800 p-3 rounded-2xl shadow-sm border border-gray-50 dark:border-white/5 text-center">
-                                <div className="w-8 h-8 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center mx-auto mb-2 text-orange-600">
-                                    <Briefcase className="w-4 h-4" />
-                                </div>
-                                <p className="text-[10px] text-gray-400 font-bold uppercase mb-1">Proof</p>
-                                <p className="text-xs font-bold dark:text-gray-200">Rapido Live</p>
-                            </div>
-                            <div className="bg-white dark:bg-slate-800 p-3 rounded-2xl shadow-sm border border-gray-50 dark:border-white/5 text-center">
-                                <div className="w-8 h-8 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center mx-auto mb-2 text-emerald-600">
-                                    <TrendingUp className="w-4 h-4" />
-                                </div>
-                                <p className="text-[10px] text-gray-400 font-bold uppercase mb-1">Score</p>
-                                <p className="text-xs font-bold dark:text-gray-200">{total} ({grade})</p>
+                                <p className="text-[10px] font-bold mt-1 opacity-90 text-white">Transfer initiated to registered bank</p>
                             </div>
                         </div>
-                    </motion.div>
+                    </div>
 
-                    {/* Loan Success Mini-Card */}
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: 1 }}
-                        className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-[2rem] p-6 text-white shadow-xl shadow-indigo-500/20 flex items-center justify-between"
-                    >
-                        <div>
-                            <p className="text-white/70 text-xs font-bold uppercase tracking-widest mb-1">Approved & Disbursed</p>
-                            <h2 className="text-4xl font-black tracking-tight">₹50,000</h2>
-                            <div className="flex items-center gap-2 mt-2">
-                                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                                <span className="text-xs font-bold text-indigo-100">Money arriving in 5 mins</span>
-                            </div>
-                        </div>
-                        <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-white/20">
-                            <Zap className="w-7 h-7 text-white" />
-                        </div>
-                    </motion.div>
-
-                    {/* Quote Bubble */}
-                    <motion.div
-                        key={currentQuote}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 10 }}
-                        className="bg-amber-50/50 dark:bg-amber-900/10 rounded-2xl p-5 border-l-4 border-amber-500 flex gap-4 items-start"
-                    >
-                        <Sparkles className="w-5 h-5 text-amber-500 shrink-0 mt-1" />
-                        <p className="text-gray-700 dark:text-amber-100 text-sm font-medium italic leading-relaxed">
-                            "{quotes[currentQuote]}"
-                        </p>
-                    </motion.div>
-
-                    {/* Action Grid */}
-                    <div className="grid grid-cols-2 gap-4">
-                        <Link href="/dashboard" className="col-span-2 md:col-span-1">
-                            <button className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-4 rounded-2xl font-black shadow-lg hover:translate-y-[-2px] active:translate-y-[0px] transition-all flex items-center justify-center gap-2">
-                                DASHBOARD
-                                <ArrowRight className="w-5 h-5" />
+                    {/* Action Bar */}
+                    <div className="flex flex-col sm:flex-row gap-4">
+                        <Link href="/dashboard" className="flex-1">
+                            <button className="w-full bg-[#020617] text-white py-6 rounded-[24px] font-black text-lg shadow-[0_10px_30px_rgba(0,0,0,0.1)] hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-4 hover:shadow-[0_15px_40px_rgba(0,0,0,0.2)]">
+                                GOTO DASHBOARD
+                                <ArrowRight className="w-6 h-6" />
                             </button>
                         </Link>
-                        <button className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-4 rounded-2xl font-bold border border-gray-100 dark:border-white/5 hover:bg-gray-50 dark:hover:bg-slate-700 flex items-center justify-center gap-2 transition-all">
+                        <button className="px-10 py-6 rounded-[24px] bg-white border border-gray-300 text-gray-700 font-black hover:bg-gray-50 transition-all flex items-center justify-center gap-3 shadow-sm hover:shadow-md">
                             <Share2 className="w-5 h-5" />
-                            SHARE
                         </button>
                     </div>
 
-                    <button className="w-full border-2 border-dashed border-gray-200 dark:border-white/10 text-gray-500 dark:text-gray-400 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:border-primary hover:text-primary transition-all">
+                    <button className="w-full border border-gray-300 text-gray-500 py-5 rounded-[24px] font-black text-[10px] uppercase tracking-[0.4em] flex items-center justify-center gap-3 hover:text-primary hover:border-primary/50 transition-all hover:shadow-sm">
                         <Download className="w-5 h-5" />
-                        DOWNLOAD CREDIT REPORT
+                        Download Detailed Report
                     </button>
+                </div>
 
-                    <p className="text-center text-[10px] text-gray-400 dark:text-gray-500 uppercase font-bold tracking-widest pt-4">
-                        GigCredit AI • India's First Gig Worker Credit Bureau
-                    </p>
+                <div className="p-6 bg-gray-50 text-center border-t border-gray-100">
+                    <p className="text-[9px] font-black text-gray-400 uppercase tracking-[0.5em]">GigCredit AI • Secure Disbursement Channel</p>
                 </div>
             </motion.div>
         </div>
     );
 }
+

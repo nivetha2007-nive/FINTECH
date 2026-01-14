@@ -1,5 +1,6 @@
 import { ArrowUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
 
 interface PillarCardProps {
     icon: React.ReactNode;
@@ -12,45 +13,37 @@ interface PillarCardProps {
 }
 
 export function PillarCard({ icon, title, score, points, weight, boosts, color = "text-primary" }: PillarCardProps) {
-    // Helper to map text color to bg color roughly
-    const bgClass = color.includes('primary') ? 'bg-primary/10' :
-        color.includes('success') ? 'bg-success/10' :
-            color.includes('warning') ? 'bg-warning/10' :
-                color.includes('error') ? 'bg-error/10' : 'bg-gray-100';
-
-    const barClass = color.includes('primary') ? 'bg-primary' :
-        color.includes('success') ? 'bg-success' :
-            color.includes('warning') ? 'bg-warning' :
-                color.includes('error') ? 'bg-error' : 'bg-gray-500';
-
     return (
-        <div className="min-w-[280px] p-5 rounded-2xl bg-white dark:bg-slate-800 shadow-glass border border-gray-100 dark:border-gray-700 flex flex-col gap-4 snap-center hover:scale-[1.02] transition-transform duration-300">
-            <div className="flex items-center justify-between">
-                <div className={cn("p-3 rounded-xl", bgClass)}>
-                    <div className={cn("w-6 h-6", color)}>{icon}</div>
+        <div className="min-w-[280px] p-6 rounded-[32px] bg-white border border-gray-100 hover:border-primary/50 transition-all duration-500 group snap-center relative overflow-hidden shadow-sm hover:shadow-md">
+            {/* Top Glow */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+
+            <div className="flex items-center justify-between mb-6">
+                <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-500">
+                    <div className="w-6 h-6">{icon}</div>
                 </div>
-                <div className="flex flex-col items-end">
-                    <span className="text-2xl font-bold dark:text-white">{score}%</span>
-                    <span className="text-xs text-gray-500 dark:text-gray-400">{points}</span>
+                <div className="text-right">
+                    <div className="text-[10px] font-black tracking-widest text-primary uppercase">{points}</div>
                 </div>
             </div>
 
-            <div>
-                <h3 className="font-semibold text-lg dark:text-white">{title}</h3>
-                <p className="text-xs text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wide">Weight: {weight}</p>
+            <div className="mb-6">
+                <h3 className="font-heading font-bold text-lg text-foreground mb-4">{title}</h3>
+
+                <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                    <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${score}%` }}
+                        transition={{ duration: 1.5, ease: "easeOut" }}
+                        className="h-full bg-gradient-to-r from-accent to-primary shadow-[0_0_10px_rgba(0,102,255,0.3)]"
+                    />
+                </div>
             </div>
 
-            <div className="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2">
-                <div
-                    className={cn("h-2 rounded-full transition-all duration-1000 ease-out", barClass)}
-                    style={{ width: `${score}%` }}
-                />
-            </div>
-
-            <div className="space-y-2 mt-1">
+            <div className="space-y-3">
                 {boosts.map((boost, i) => (
-                    <div key={i} className="flex items-start gap-2 text-xs text-gray-600 dark:text-gray-300">
-                        <ArrowUp className="w-3 h-3 text-success mt-0.5 shrink-0" />
+                    <div key={i} className="flex items-center gap-2 text-[11px] font-bold text-gray-500 group-hover:text-gray-700 transition-colors">
+                        <ArrowUp className="w-3 h-3 text-success" />
                         <span>{boost}</span>
                     </div>
                 ))}

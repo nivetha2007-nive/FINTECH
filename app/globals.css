@@ -3,36 +3,67 @@
 @tailwind utilities;
 
 :root {
-  --primary: #6366F1;
-  /* Indigo-500 */
-  --success: #10B981;
-  /* Emerald-500 */
-  --warning: #F59E0B;
-  /* Amber-500 */
-  --error: #EF4444;
-  /* Red-500 */
-  --bg-dark: #0F172A;
-  /* Slate-900 */
-  --bg-light: #F8FAFC;
-  /* Slate-50 */
-  --card: rgba(255, 255, 255, 0.9);
-  --shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  --primary: #0066FF;
+  /* Electric Blue */
+  --accent: #FF3366;
+  /* Pink/Magenta */
+  --cyan: #00C2FF;
+  /* Bright Cyan */
+  --success: #00C851;
+  --warning: #FFBB33;
+  --error: #FF4444;
+
+  --bg-dark: #FFFFFF;
+  /* White */
+  --bg-light: #E6F0FF;
+  /* Light Pastel Blue */
+
+  --card: #FFFFFF;
+  --shadow: 0 4px 20px rgba(0, 102, 255, 0.1);
 
   --background: var(--bg-light);
-  --foreground: var(--bg-dark);
+  --foreground: #003366;
+  /* Deep Navy Blue */
 }
 
-[data-theme='dark'] {
-  --background: var(--bg-dark);
-  --foreground: var(--bg-light);
-  --card: rgba(15, 23, 42, 0.9);
+[data-theme='dark'],
+.dark {
+  --background: #020617;
+  --foreground: #f8fafc;
+  --card: rgba(1, 4, 19, 0.7);
+  --shadow: 0 0 30px rgba(0, 242, 255, 0.15);
+}
+
+
+
+* {
+  scroll-behavior: smooth;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  /* Setup Inter in app layout */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+  box-shadow: 0 0 10px var(--primary);
 }
 
 @layer utilities {
@@ -44,19 +75,13 @@ body {
   }
 
   .animate-gradient {
-    background-size: 200% 200%;
-    animation: gradient 3s ease infinite;
+    background-size: 200% auto;
+    animation: text-gradient 8s linear infinite;
   }
 
-  @keyframes gradient {
-
-    0%,
-    100% {
-      background-position: 0% 50%;
-    }
-
-    50% {
-      background-position: 100% 50%;
+  @keyframes text-gradient {
+    to {
+      background-position: 200% center;
     }
   }
 }

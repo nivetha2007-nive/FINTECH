@@ -3,85 +3,124 @@
 import { useScoreStore } from '@/lib/store';
 import { ScoreCircle } from '@/components/ScoreCircle';
 import { PillarCard } from '@/components/PillarCard';
-import { Share2, RefreshCw, ChevronLeft, ArrowRight, Zap, FileText, Briefcase, Users, Activity, Lock, TrendingUp, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { Share2, RefreshCw, ChevronLeft, ArrowRight, Zap, FileText, Briefcase, Users, Activity, Lock, TrendingUp, AlertTriangle, CheckCircle2, LogOut } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
-
+import { motion } from 'framer-motion';
 import { useAuthStore } from '@/lib/auth-store';
 
 export default function ScoreDashboard() {
     const { pillars, total, grade, eligibleAmount } = useScoreStore();
     const user = useAuthStore((state) => state.user);
+    const logout = useAuthStore((state) => state.logout);
+    const router = useRouter();
+
+    const handleLogout = () => {
+        logout();
+        router.push('/');
+    };
 
     const userName = user?.name || 'Rajesh Kumar';
-    const handleShare = () => {
-        if (typeof navigator !== 'undefined' && navigator.share) {
-            navigator.share({
-                title: 'My GigCredit Score',
-                text: `I scored ${total} on GigCredit AI! Check my eligibility.`,
-                url: window.location.href,
-            }).catch(console.error);
-        } else {
-            alert('Share functionality not available on this device.');
-        }
-    }
 
     const pillarsList = [
-        { key: 'upi' as const, icon: <Zap />, title: 'UPI Behavior', color: 'text-indigo-500', boosts: ['Consistent income +140', 'Perfect discipline +70'] },
-        { key: 'bills' as const, icon: <FileText />, title: 'Bills Utility', color: 'text-emerald-500', boosts: ['All bills paid on time'] },
-        { key: 'job' as const, icon: <Briefcase />, title: 'Employment', color: 'text-blue-500', boosts: ['Stable gig work > 6 mos'] },
-        { key: 'social' as const, icon: <Users />, title: 'Social', color: 'text-pink-500', boosts: ['Verified contacts'] },
-        { key: 'finance' as const, icon: <Activity />, title: 'Finance', color: 'text-amber-500', boosts: ['Good savings ratio'] },
-        { key: 'identity' as const, icon: <Lock />, title: 'Identity', color: 'text-purple-500', boosts: ['Fully KYC verified'] },
+        { key: 'upi' as const, icon: <Zap />, title: 'UPI Intelligence', color: 'text-primary', boosts: ['Income Velocity +140', 'UPI Discipline +70'] },
+        { key: 'bills' as const, icon: <FileText />, title: 'Utilities Sync', color: 'text-primary', boosts: ['Bill Sync Active', 'No Delays'] },
+        { key: 'job' as const, icon: <Briefcase />, title: 'Platform Trust', color: 'text-primary', boosts: ['Certified Hustler', 'Rapido Verified'] },
+        { key: 'social' as const, icon: <Users />, title: 'Social Stability', color: 'text-primary', boosts: ['Identity Verified'] },
+        { key: 'finance' as const, icon: <Activity />, title: 'Fiscal Grade', color: 'text-primary', boosts: ['Savings Ratio 24%'] },
+        { key: 'identity' as const, icon: <Lock />, title: 'Digital KYC', color: 'text-primary', boosts: ['Bank-Level Verify'] },
     ];
 
     return (
-        <div className="min-h-screen bg-bg-light dark:bg-bg-dark pb-24">
+        <div className="min-h-screen bg-background text-foreground pb-24 selection:bg-primary/30">
+            {/* Animated Background */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-primary/5 blur-[120px]" />
+                <div className="absolute bottom-[-10%] left-[-20%] w-[50%] h-[50%] rounded-full bg-accent/5 blur-[120px]" />
+                <div className="absolute top-[20%] left-[10%] w-[1px] h-full bg-gradient-to-b from-primary/10 via-transparent to-transparent" />
+            </div>
+
             {/* Header */}
-            <header className="px-4 py-4 backdrop-blur-md sticky top-0 z-50 flex items-center justify-between border-b border-gray-100 dark:border-gray-800 bg-white/50 dark:bg-slate-900/50">
-                <Link href="/" className="flex items-center gap-1 text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">
-                    <ChevronLeft className="w-5 h-5" />
-                    <span className="text-sm font-medium">Back</span>
-                </Link>
-                <h1 className="font-bold text-gray-900 dark:text-white">{userName}</h1>
-                <button className="flex items-center gap-1 text-primary text-sm font-medium bg-primary/10 px-3 py-1.5 rounded-full hover:bg-primary/20 transition-colors">
-                    <RefreshCw className="w-3.5 h-3.5" />
-                    <span className="hidden sm:inline">Refresh</span>
-                </button>
-            </header>
+            <header className="relative z-50 px-6 py-6 border-b border-gray-100 backdrop-blur-xl sticky top-0 bg-white/50">
+                <div className="max-w-7xl mx-auto flex items-center justify-between">
+                    <Link href="/" className="flex items-center gap-2 group text-gray-500 hover:text-primary transition-colors">
+                        <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em]">Exit Dashboard</span>
+                    </Link>
 
-            <main className="p-4 md:p-6 max-w-4xl mx-auto space-y-8 animate-in fade-in duration-700">
-                {/* Score Section */}
-                <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-glass text-center relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary via-purple-500 to-pink-500" />
-
-                    <ScoreCircle score={total} max={900} grade={grade} />
-
-                    <div className="mt-2 mb-6">
-                        <p className="text-gray-500 dark:text-gray-400 text-sm font-medium uppercase tracking-wide">Eligible Amount</p>
-                        <p className="text-4xl font-extrabold text-gray-900 dark:text-white my-2 tracking-tight">₹{(eligibleAmount).toLocaleString('en-IN')}</p>
-                        <p className="text-xs text-primary font-bold bg-primary/10 inline-block px-3 py-1 rounded-full border border-primary/20">@ 12% Interest p.a.</p>
+                    <div className="flex flex-col items-center">
+                        <span className="text-[10px] font-black tracking-[0.4em] uppercase text-primary mb-1">Authenticated User</span>
+                        <h1 className="text-xl font-heading font-black tracking-tight text-foreground">{userName}</h1>
                     </div>
 
-                    <div className="flex gap-4 justify-center items-center">
-                        <Link href="/loan" className="w-full max-w-xs">
-                            <button className="w-full bg-primary text-white py-4 rounded-2xl font-bold shadow-lg shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition-all">
-                                Apply for ₹50K Loan
-                            </button>
-                        </Link>
-                        <button onClick={handleShare} className="bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400 p-4 rounded-2xl hover:bg-green-200 dark:hover:bg-green-900/40 transition-colors">
-                            <Share2 className="w-6 h-6" />
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={handleLogout}
+                            className="flex items-center gap-2 text-error bg-error/10 px-4 py-2 rounded-xl border border-error/20 hover:bg-error/20 transition-all active:scale-95"
+                        >
+                            <LogOut className="w-4 h-4" />
+                            <span className="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Logout</span>
+                        </button>
+                        <button className="flex items-center gap-2 text-primary bg-primary/10 px-4 py-2 rounded-xl border border-primary/20 hover:bg-primary/20 transition-all active:scale-95">
+                            <RefreshCw className="w-4 h-4" />
+                            <span className="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Sync Data</span>
                         </button>
                     </div>
                 </div>
+            </header>
 
-                {/* Pillars Scroll */}
-                <div>
-                    <div className="flex justify-between items-center mb-4 px-2">
-                        <h3 className="font-bold text-lg text-gray-900 dark:text-white">Score Breakdown</h3>
-                        <span className="text-xs text-gray-500 font-medium">Swipe to see all →</span>
+            <main className="relative z-10 p-6 max-w-7xl mx-auto space-y-12 mt-8">
+                {/* Score Section - The "Gauge" Container */}
+                <div className="relative rounded-[48px] bg-white border border-primary/10 p-12 overflow-hidden group shadow-[0_20px_60px_rgba(0,102,255,0.08)]">
+                    {/* Inner Glass Effect */}
+                    <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+                    <div className="absolute -right-20 -top-20 w-64 h-64 bg-primary/5 blur-[100px] rounded-full" />
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                        <div className="flex justify-center lg:justify-start">
+                            <ScoreCircle score={total} max={900} grade={grade} />
+                        </div>
+
+                        <div className="space-y-10 text-center lg:text-left">
+                            <div>
+                                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500 mb-2">Maximum Credit Unlocked</p>
+                                <h2 className="text-6xl md:text-8xl font-heading font-black tracking-tighter text-foreground">
+                                    ₹{(eligibleAmount).toLocaleString('en-IN')}
+                                </h2>
+                                <p className="text-primary font-black uppercase tracking-[0.2em] text-xs mt-4 flex items-center justify-center lg:justify-start gap-2">
+                                    <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+                                    Instant Disbursement Ready
+                                </p>
+                            </div>
+
+                            <div className="flex flex-col sm:flex-row gap-4">
+                                <Link href="/loan" className="flex-1">
+                                    <button className="w-full bg-primary text-white py-5 rounded-2xl font-black text-lg shadow-[0_10px_40px_rgba(0,102,255,0.3)] hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3">
+                                        LOAN APPLICATION
+                                        <ArrowRight className="w-6 h-6" />
+                                    </button>
+                                </Link>
+                                <button className="px-8 py-5 rounded-2xl bg-white border border-gray-300 text-gray-700 font-black hover:bg-gray-50 transition-all flex items-center justify-center gap-3 shadow-sm hover:shadow-md">
+                                    <Share2 className="w-5 h-5" />
+                                    SHARE
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <div className="flex overflow-x-auto gap-4 pb-6 px-2 -mx-2 hide-scrollbar snap-x snap-mandatory">
+                </div>
+
+                {/* Intelligence Modules */}
+                <div>
+                    <div className="flex items-end justify-between mb-8 px-4">
+                        <div>
+                            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary mb-2">Score Breakdown</p>
+                            <h3 className="text-3xl font-heading font-black text-foreground">Intelligence Modules</h3>
+                        </div>
+                        <span className="text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest animate-pulse">Swipe to explore &rarr;</span>
+                    </div>
+
+                    <div className="flex overflow-x-auto gap-6 pb-8 px-4 -mx-4 hide-scrollbar snap-x">
                         {pillarsList.map((p) => {
                             const data = pillars[p.key];
                             return (
@@ -91,7 +130,7 @@ export default function ScoreDashboard() {
                                     title={p.title}
                                     score={data.score}
                                     points={`${data.points}/${data.max}`}
-                                    weight="35%"
+                                    weight="Proprietary"
                                     boosts={p.boosts}
                                     color={p.color}
                                 />
@@ -100,82 +139,56 @@ export default function ScoreDashboard() {
                     </div>
                 </div>
 
-                {/* Detailed Table */}
-                <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
-                    <h3 className="font-bold text-lg mb-4 dark:text-white">Detailed Report</h3>
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-sm text-left dark:text-gray-300">
-                            <thead className="text-xs text-gray-500 uppercase bg-gray-50 dark:bg-slate-700/50 rounded-lg">
-                                <tr>
-                                    <th className="px-4 py-3 rounded-l-lg">Pillar</th>
-                                    <th className="px-4 py-3">Score</th>
-                                    <th className="px-4 py-3">Weight</th>
-                                    <th className="px-4 py-3 rounded-r-lg">Points</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-                                {pillarsList.map((p) => {
-                                    const data = pillars[p.key];
-                                    return (
-                                        <tr key={p.key}>
-                                            <td className="px-4 py-3 font-medium flex items-center gap-2">
-                                                <div className={cn("w-2 h-2 rounded-full hidden sm:block", p.color.replace('text-', 'bg-'))} />
-                                                {p.title}
-                                            </td>
-                                            <td className="px-4 py-3 font-bold">{data.score}%</td>
-                                            <td className="px-4 py-3 text-gray-500">15%</td>
-                                            <td className="px-4 py-3">{data.points}</td>
-                                        </tr>
-                                    )
-                                })}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                {/* Factors & Improvment */}
-                <div className="grid md:grid-cols-2 gap-6">
-                    <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
-                        <h3 className="font-bold text-lg mb-4 dark:text-white">What Boosted Your Score</h3>
-                        <div className="space-y-3">
-                            <div className="flex items-start gap-2 text-sm dark:text-gray-300">
-                                <CheckCircle2 className="w-5 h-5 text-success shrink-0" />
-                                <span>Perfect bill payments <span className="font-bold text-success">+65 pts</span></span>
-                            </div>
-                            <div className="flex items-start gap-2 text-sm dark:text-gray-300">
-                                <CheckCircle2 className="w-5 h-5 text-success shrink-0" />
-                                <span>Stable Rapido income <span className="font-bold text-success">+55 pts</span></span>
-                            </div>
-                            <div className="flex items-start gap-2 text-sm dark:text-gray-300">
-                                <AlertTriangle className="w-5 h-5 text-warning shrink-0" />
-                                <span>New credit account <span className="font-bold text-error">-15 pts</span></span>
-                            </div>
+                {/* Factors & Stats Grid */}
+                <div className="grid md:grid-cols-2 gap-8">
+                    {/* Insights */}
+                    <div className="p-10 rounded-[40px] bg-white border border-primary/10 relative overflow-hidden shadow-sm">
+                        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-8">Hustle Signals</h3>
+                        <div className="space-y-6">
+                            {[
+                                { label: "UPI Consistency", value: "+148 pts", icon: CheckCircle2, status: "Positive" },
+                                { label: "Bill Payment Discipline", value: "+82 pts", icon: CheckCircle2, status: "Positive" },
+                                { label: "New Credit Inquiry", value: "-12 pts", icon: AlertTriangle, status: "Negative" },
+                            ].map((item, i) => (
+                                <div key={i} className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 group hover:border-primary/20 transition-all">
+                                    <div className="flex items-center gap-4">
+                                        <item.icon className={cn("w-5 h-5", item.status === "Positive" ? "text-success" : "text-error")} />
+                                        <span className="text-sm font-bold text-gray-500 group-hover:text-foreground transition-colors">{item.label}</span>
+                                    </div>
+                                    <span className={cn("text-sm font-black tracking-widest", item.status === "Positive" ? "text-success" : "text-error")}>{item.value}</span>
+                                </div>
+                            ))}
                         </div>
                     </div>
 
-                    <div className="bg-gradient-to-br from-indigo-900 to-primary rounded-3xl p-6 text-white shadow-lg">
-                        <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
-                            <TrendingUp className="w-5 h-5" />
-                            Improvement Plan
+                    {/* Improvement Plan */}
+                    <div className="p-10 rounded-[40px] bg-white border border-primary/10 relative overflow-hidden group shadow-sm">
+                        <div className="absolute inset-0 bg-primary/5 blur-3xl rounded-full translate-x-1/2 translate-y-1/2" />
+                        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-8 flex items-center gap-2">
+                            Improvement Roadmap
                         </h3>
-                        <div className="space-y-4 mb-6">
-                            <div className="flex justify-between text-sm border-b border-white/10 pb-2">
-                                <span>1. Wait 4 months</span>
-                                <span className="font-bold text-green-300">+10 pts</span>
+
+                        <div className="space-y-4 mb-10 relative z-10">
+                            <div className="flex justify-between p-4 rounded-xl bg-white border border-gray-100 text-sm font-bold shadow-sm">
+                                <span className="text-gray-500">Monthly Avg Balance &gt; ₹5k</span>
+                                <span className="text-success tracking-widest">+22 PTS</span>
                             </div>
-                            <div className="flex justify-between text-sm border-b border-white/10 pb-2">
-                                <span>2. Save 20% monthly</span>
-                                <span className="font-bold text-green-300">+15 pts</span>
+                            <div className="flex justify-between p-4 rounded-xl bg-white border border-gray-100 text-sm font-bold shadow-sm">
+                                <span className="text-gray-500">Zero Late Utility Bills</span>
+                                <span className="text-success tracking-widest">+15 PTS</span>
                             </div>
                         </div>
-                        <div className="bg-white/10 rounded-xl p-4 text-center backdrop-blur-sm border border-white/10">
-                            <p className="text-sm opacity-80 mb-1">Potential Score</p>
-                            <p className="text-3xl font-bold flex items-center justify-center gap-3">
-                                821
-                                <ArrowRight className="w-5 h-5 text-white/50" />
-                                844
-                            </p>
-                            <p className="text-xs opacity-60 mt-1 uppercase tracking-widest">in 6 months 🎯</p>
+
+                        <div className="bg-white/50 backdrop-blur-md rounded-3xl p-8 text-center border border-gray-200 relative z-10 group-hover:bg-white/80 transition-all">
+                            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500 mb-2">Projected Score (6MO)</p>
+                            <div className="text-5xl font-heading font-black flex items-center justify-center gap-5 text-foreground">
+                                {total}
+                                <ArrowRight className="w-8 h-8 text-primary animate-pulse" />
+                                {total + 35}
+                            </div>
+                            <div className="mt-4 inline-block px-4 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest">
+                                Target: Elite Grade
+                            </div>
                         </div>
                     </div>
                 </div>

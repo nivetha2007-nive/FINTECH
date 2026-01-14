@@ -2,100 +2,93 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, UserPlus } from 'lucide-react';
+import { ShieldCheck, ArrowRight, ChevronLeft } from 'lucide-react';
 import { useState } from 'react';
 import { useAuthStore } from '@/lib/auth-store';
+import { motion } from 'framer-motion';
 
 export default function SignUp() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const login = useAuthStore((state) => state.login);
 
-    const handleRegister = (e: React.FormEvent) => {
+    const handleSignUp = (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        // Simulate reg
         setTimeout(() => {
-            login('Rajesh Kumar', '9876543210');
+            login('New User', '9876543210');
             router.push('/get-started');
         }, 1500);
     };
 
     return (
-        <div className="min-h-screen bg-bg-light dark:bg-bg-dark flex flex-col items-center justify-center p-6 relative overflow-hidden">
-            {/* Background decorations */}
-            <div className="absolute top-[-10%] left-[20%] w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
+        <div className="min-h-screen bg-background text-foreground flex flex-col items-center p-6 md:p-12 relative overflow-hidden">
+            {/* Background Glows */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-[-20%] left-[-10%] w-[800px] h-[800px] bg-primary/5 blur-[150px]" />
+                <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-accent/5 blur-[120px]" />
+            </div>
 
-            <div className="w-full max-w-md bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-glass border border-white/20 relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <div className="text-center mb-8">
-                    <div className="w-12 h-12 bg-gray-900 dark:bg-white rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                        <UserPlus className="text-white dark:text-gray-900 w-6 h-6" />
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="w-full max-w-xl bg-white backdrop-blur-3xl border border-primary/10 p-8 md:p-12 rounded-[48px] shadow-[0_10px_60px_rgba(0,102,255,0.1)] relative z-10"
+            >
+                <div className="flex flex-col items-center text-center mb-12">
+                    <Link href="/sign-in" className="flex items-center gap-2 text-gray-500 hover:text-primary transition-colors mb-8 group">
+                        <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                        <span className="text-[10px] font-black uppercase tracking-widest">Authorized Access</span>
+                    </Link>
+
+                    <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mb-6 border border-primary/10">
+                        <ShieldCheck className="text-primary w-12 h-12" strokeWidth={2.5} />
                     </div>
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Create Account</h1>
-                    <p className="text-gray-500 dark:text-gray-400 text-sm">Join 50k+ gig workers getting loans</p>
+                    <h1 className="text-4xl font-heading font-black tracking-tight mb-2 uppercase text-foreground">Create Account</h1>
+                    <p className="text-[10px] font-black uppercase tracking-[0.5em] text-gray-500">Begin Your GigCredit Journey</p>
                 </div>
 
-                <form onSubmit={handleRegister} className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">First Name</label>
-                            <input
-                                required
-                                type="text"
-                                className="w-full p-4 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-100 dark:border-gray-600 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all dark:text-white"
-                            />
+                <form onSubmit={handleSignUp} className="space-y-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-2">Display Name</label>
+                            <input required placeholder="e.g. Alex" className="w-full p-5 rounded-2xl bg-white border border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary outline-none font-bold text-foreground placeholder:text-gray-400 shadow-sm" />
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Last Name</label>
-                            <input
-                                required
-                                type="text"
-                                className="w-full p-4 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-100 dark:border-gray-600 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all dark:text-white"
-                            />
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-2">Registry ID (Mobile)</label>
+                            <input required placeholder="98765 43210" className="w-full p-5 rounded-2xl bg-white border border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary outline-none font-bold text-foreground placeholder:text-gray-400 shadow-sm" />
                         </div>
                     </div>
 
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Mobile Number</label>
-                        <input
-                            required
-                            type="tel"
-                            placeholder="+91 98765 43210"
-                            className="w-full p-4 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-100 dark:border-gray-600 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all dark:text-white"
-                        />
+                    <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-2">Neural Key (Password)</label>
+                        <input required type="password" placeholder="••••••••" className="w-full p-5 rounded-2xl bg-white border border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary outline-none font-bold text-foreground placeholder:text-gray-400 shadow-sm" />
                     </div>
 
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Create Password</label>
-                        <input
-                            required
-                            type="password"
-                            placeholder="••••••••"
-                            className="w-full p-4 rounded-xl bg-gray-50 dark:bg-slate-700 border border-gray-100 dark:border-gray-600 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all dark:text-white"
-                        />
-                    </div>
-
-                    <div className="flex items-center gap-2 mb-2">
-                        <input type="checkbox" required id="terms" className="w-4 h-4 rounded text-primary focus:ring-primary accent-primary" />
-                        <label htmlFor="terms" className="text-xs text-gray-500">I agree to the <a href="#" className="underline">Terms</a> & <a href="#" className="underline">Privacy Policy</a></label>
+                    <div className="bg-primary/5 p-6 rounded-3xl border border-primary/10 space-y-4">
+                        <div className="flex items-start gap-4">
+                            <input type="checkbox" required className="mt-1 accent-primary" />
+                            <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 leading-relaxed">
+                                I verify my intent to sync financial data for AI calculation under the <span className="text-primary">GigCredit Identity Standard</span>.
+                            </p>
+                        </div>
                     </div>
 
                     <button
                         disabled={loading}
-                        className="w-full bg-gray-900 dark:bg-white text-white dark:text-gray-900 py-4 rounded-xl font-bold shadow-lg mt-2 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                        className="w-full bg-primary text-white py-6 rounded-2xl font-black shadow-[0_4px_20px_rgba(0,102,255,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-4 disabled:opacity-50 uppercase tracking-[0.3em] hover:shadow-[0_6px_30px_rgba(0,102,255,0.4)]"
                     >
                         {loading ? (
-                            <div className="w-5 h-5 border-2 border-gray-500 border-t-transparent rounded-full animate-spin" />
+                            <div className="w-6 h-6 border-3 border-white/30 border-t-white rounded-full animate-spin" />
                         ) : (
-                            <>Get Started <ArrowRight className="w-5 h-5" /></>
+                            <>CREATE ACCOUNT <ArrowRight className="w-5 h-5" /></>
                         )}
                     </button>
                 </form>
 
-                <p className="text-center mt-8 text-sm text-gray-500">
-                    Already have an account? <Link href="/sign-in" className="text-primary font-bold hover:underline">Sign in</Link>
+                <p className="text-center mt-12 text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">
+                    Already have an account? <Link href="/sign-in" className="text-primary hover:text-cyan transition-colors ml-1 underline decoration-primary/30 underline-offset-4">Sign In</Link>
                 </p>
-            </div>
+            </motion.div>
         </div>
     );
 }

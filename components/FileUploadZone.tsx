@@ -45,8 +45,8 @@ export function FileUploadZone({ type, accept, cameraEnabled }: FileUploadZonePr
             <div
                 {...getRootProps()}
                 className={cn(
-                    "relative border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center text-center transition-all cursor-pointer min-h-[240px] overflow-hidden",
-                    isDragActive ? "border-primary bg-primary/5 scale-[0.99]" : "border-gray-200 dark:border-gray-700 hover:border-primary/50 hover:bg-gray-50 dark:hover:bg-slate-800/50",
+                    "relative border-2 border-dashed rounded-[32px] p-10 flex flex-col items-center justify-center text-center transition-all cursor-pointer min-h-[300px] overflow-hidden",
+                    isDragActive ? "border-primary bg-primary/5 scale-[0.99]" : "border-white/10 hover:border-primary/50 hover:bg-white/[0.02]",
                     file ? "border-success/50 bg-success/5" : ""
                 )}
             >
@@ -63,29 +63,29 @@ export function FileUploadZone({ type, accept, cameraEnabled }: FileUploadZonePr
                         ) : (
                             <>
                                 <div className="relative">
-                                    <div className="w-20 h-20 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 flex items-center justify-center mb-4">
+                                    <div className="w-20 h-20 bg-white/5 rounded-2xl border border-white/10 flex items-center justify-center mb-4">
                                         <FileText className="w-10 h-10 text-primary" />
                                     </div>
-                                    <div className="absolute -bottom-2 -right-2 bg-success text-white p-1 rounded-full shadow-md">
+                                    <div className="absolute -bottom-2 -right-2 bg-success text-[#020617] p-1 rounded-full shadow-md">
                                         <CheckCircle className="w-4 h-4 fill-current stroke-white" />
                                     </div>
                                 </div>
 
-                                <p className="font-bold text-gray-900 dark:text-white truncate w-full text-center">{file.name}</p>
+                                <p className="font-bold text-white truncate w-full text-center">{file.name}</p>
                                 <p className="text-xs text-gray-500 mb-4">{(file.size / 1024).toFixed(1)} KB</p>
 
-                                <div className="bg-white dark:bg-slate-800 rounded-xl p-3 w-full shadow-sm border border-gray-100 dark:border-gray-700 text-left">
-                                    <div className="flex justify-between items-center mb-1">
-                                        <span className="text-xs text-gray-500">Bank</span>
-                                        <span className="text-xs font-semibold text-gray-900 dark:text-white">HDFC Bank</span>
+                                <div className="bg-white/5 rounded-xl p-4 w-full border border-white/10 text-left">
+                                    <div className="flex justify-between items-center mb-2">
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Bank</span>
+                                        <span className="text-xs font-black text-white">HDFC Bank</span>
                                     </div>
-                                    <div className="flex justify-between items-center mb-1">
-                                        <span className="text-xs text-gray-500">Transactions</span>
-                                        <span className="text-xs font-semibold text-gray-900 dark:text-white">245 Detected</span>
+                                    <div className="flex justify-between items-center mb-2">
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Transactions</span>
+                                        <span className="text-xs font-black text-white">245 Detected</span>
                                     </div>
                                     <div className="flex justify-between items-center">
-                                        <span className="text-xs text-gray-500">Status</span>
-                                        <span className="text-xs font-bold text-success">Valid Statement</span>
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Status</span>
+                                        <span className="text-[10px] font-black text-success uppercase tracking-widest px-2 py-0.5 bg-success/10 rounded-md">Valid</span>
                                     </div>
                                 </div>
 
@@ -100,14 +100,14 @@ export function FileUploadZone({ type, accept, cameraEnabled }: FileUploadZonePr
                     </div>
                 ) : (
                     <>
-                        <div className="w-20 h-20 bg-blue-50 dark:bg-blue-900/20 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500 border border-primary/20">
                             <Upload className="w-10 h-10 text-primary" />
                         </div>
 
-                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
-                            Upload {type.replace(/-/g, ' ')}
+                        <h3 className="text-xl font-heading font-black text-white mb-3 uppercase tracking-tight">
+                            UPLOAD {type.replace(/-/g, ' ')}
                         </h3>
-                        <p className="text-sm text-gray-500 max-w-[200px] leading-relaxed mb-6">
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 max-w-[250px] leading-relaxed mb-8">
                             Drag & drop files here, or click to select from device
                         </p>
 
@@ -119,7 +119,7 @@ export function FileUploadZone({ type, accept, cameraEnabled }: FileUploadZonePr
                                         e.stopPropagation();
                                         open();
                                     }}
-                                    className="flex items-center gap-2 bg-white dark:bg-slate-700 border border-gray-200 dark:border-gray-600 shadow-sm px-6 py-2.5 rounded-xl text-sm font-semibold hover:bg-gray-50 dark:hover:bg-slate-600 transition-colors"
+                                    className="flex items-center gap-3 bg-primary text-[#020617] px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-[0_0_20px_rgba(0,242,255,0.3)] hover:scale-105 transition-all"
                                 >
                                     <Camera className="w-4 h-4" />
                                     Open Camera
