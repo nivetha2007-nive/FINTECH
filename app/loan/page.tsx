@@ -3,12 +3,12 @@
 import { LoanCalculator } from '@/components/LoanCalculator';
 import { UserDetailsForm } from '@/components/UserDetailsForm';
 import { ScoreCircle } from '@/components/ScoreCircle';
-import { ChevronLeft, CheckCircle, ShieldCheck, ArrowRight, Zap, Target, Building2, Mail } from 'lucide-react';
+import { ChevronLeft, CheckCircle, ArrowRight, Building2, Mail } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
 type Step = 'calculator' | 'details' | 'submitted';
 
@@ -21,10 +21,8 @@ const BANKS = [
 ];
 
 export default function LoanApplication() {
-    const router = useRouter();
     const [step, setStep] = useState<Step>('calculator');
     const [selectedBank, setSelectedBank] = useState<string | null>(null);
-    const [isSigning, setIsSigning] = useState(false);
 
     const [showSuccess, setShowSuccess] = useState(false);
 
@@ -36,7 +34,7 @@ export default function LoanApplication() {
         }
     };
 
-    const handleFormSubmit = (data: any) => {
+    const handleFormSubmit = (data: Record<string, unknown>) => {
         console.log("Form Data:", data);
         setShowSuccess(true);
         setTimeout(() => {
@@ -45,13 +43,7 @@ export default function LoanApplication() {
         }, 2500);
     };
 
-    const handleESign = () => {
-        setIsSigning(true);
-        // Simulate eSign process
-        setTimeout(() => {
-            router.push('/loan/success');
-        }, 2000);
-    };
+
 
     return (
         <div className="min-h-screen bg-background text-foreground p-6 md:p-12 flex flex-col items-center relative overflow-hidden">
@@ -145,7 +137,7 @@ export default function LoanApplication() {
                                             <div className="h-10 w-full flex items-center justify-center">
                                                 {/* Using text fallback for simplicity if images fail, but structure supports imgs */}
                                                 {bank.logo ? (
-                                                    <img src={bank.logo} alt={bank.name} className="h-8 object-contain" />
+                                                    <Image src={bank.logo} alt={bank.name} width={120} height={32} className="h-8 object-contain" unoptimized />
                                                 ) : (
                                                     <Building2 className="w-6 h-6 text-gray-400" />
                                                 )}

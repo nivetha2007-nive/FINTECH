@@ -1,5 +1,5 @@
 import { ArrowUp } from 'lucide-react';
-import { cn } from '@/lib/utils';
+
 import { motion } from 'framer-motion';
 
 interface PillarCardProps {
@@ -12,7 +12,7 @@ interface PillarCardProps {
     color?: string; // e.g., 'text-primary'
 }
 
-export function PillarCard({ icon, title, score, points, weight, boosts, color = "text-primary" }: PillarCardProps) {
+export function PillarCard({ icon, title, score, points, boosts }: PillarCardProps) {
     return (
         <div className="min-w-[280px] p-1 rounded-[32px] bg-gradient-to-br from-white/40 to-white/0 hover:from-primary/20 hover:to-accent/20 transition-all duration-500 group snap-center relative shadow-sm hover:shadow-xl hover:-translate-y-1">
             <div className="bg-white/90 backdrop-blur-xl h-full rounded-[30px] p-6 relative overflow-hidden">

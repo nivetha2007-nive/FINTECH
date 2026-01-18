@@ -2,8 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { cn } from '@/lib/utils';
-import { Trophy, TrendingUp } from 'lucide-react';
+import { TrendingUp } from 'lucide-react';
 
 interface ScoreCircleProps {
     score: number;

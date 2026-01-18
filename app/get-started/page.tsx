@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Camera, User, Smartphone, Fingerprint, CreditCard, Briefcase, Rocket, Check, Lock, ChevronLeft } from 'lucide-react';
+import { Camera, User, Fingerprint, CreditCard, Briefcase, Rocket, Check, ChevronLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { FileUploadZone } from '@/components/FileUploadZone';
 import { cn } from '@/lib/utils';
@@ -21,7 +21,7 @@ export default function Onboarding() {
 
     const login = useAuthStore((state) => state.login);
 
-    const handleStepComplete = (data?: any) => {
+    const handleStepComplete = (data?: { name?: string; mobile?: string }) => {
         if (currentStep === 1 && data?.name) {
             login(data.name, data.mobile || "");
         }
@@ -163,7 +163,7 @@ const step1Schema = z.object({
     altMobile: z.string().regex(/^[0-9]{10}$/, "Valid mobile number required").optional().or(z.literal('')),
 });
 
-function Step1BasicInfo({ onNext }: { onNext: (data: any) => void }) {
+function Step1BasicInfo({ onNext }: { onNext: (data: z.infer<typeof step1Schema>) => void }) {
     const { register, handleSubmit, formState: { errors } } = useForm({ resolver: zodResolver(step1Schema) });
 
     return (

@@ -3,11 +3,11 @@
 import { useScoreStore } from '@/lib/store';
 import { ScoreCircle } from '@/components/ScoreCircle';
 import { PillarCard } from '@/components/PillarCard';
-import { Share2, RefreshCw, ChevronLeft, ArrowRight, Zap, FileText, Briefcase, Users, Activity, Lock, TrendingUp, AlertTriangle, CheckCircle2, LogOut } from 'lucide-react';
+import { Share2, RefreshCw, ChevronLeft, ArrowRight, Zap, FileText, Briefcase, Users, Activity, Lock, AlertTriangle, CheckCircle2, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
+
 import { useAuthStore } from '@/lib/auth-store';
 
 export default function ScoreDashboard() {

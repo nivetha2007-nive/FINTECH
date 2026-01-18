@@ -10,7 +10,6 @@ import {
     ShieldCheck,
     Rocket,
     Flame,
-    LayoutDashboard,
     ChevronLeft,
     Activity,
     Users,

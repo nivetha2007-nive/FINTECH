@@ -1,6 +1,6 @@
 'use client';
 
-import { ShieldCheck, TrendingUp, Zap, Users, Award, ChevronRight, Star, Sparkles, ArrowRight, Play, CheckCircle2, Globe, Lock, Shield, Fuel, MonitorIcon, Bike, ShoppingBag, Gauge, History, FileSearch, Wallet, Plus, Minus } from 'lucide-react';
+import { ShieldCheck, TrendingUp, Zap, Users, Award, ChevronRight, Star, Sparkles, ArrowRight, Globe, Lock, Gauge, History, FileSearch, Wallet, Plus, Minus, ShoppingBag } from 'lucide-react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
@@ -8,7 +8,6 @@ import Image from 'next/image';
 import { Spotlight } from '@/components/ui/Spotlight';
 
 export default function LandingPage() {
-  const [hoveredPillar, setHoveredPillar] = useState<number | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const platforms = [
@@ -118,7 +117,7 @@ export default function LandingPage() {
               </h1>
 
               <p className="text-xl md:text-2xl text-gray-600 mb-10 max-w-xl leading-relaxed">
-                India's first AI-driven credit score designed specifically for 500 million gig workers. Turning your daily hustle into financial power.
+                India&apos;s first AI-driven credit score designed specifically for 500 million gig workers. Turning your daily hustle into financial power.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4">
@@ -194,7 +193,7 @@ export default function LandingPage() {
                 <span className="text-primary italic">A Financial Identity.</span>
               </h2>
               <p className="text-xl text-gray-500 max-w-2xl mx-auto font-medium leading-relaxed">
-                We've rebuilt credit assessment from the ground up for the modern worker, using the data that actually defines your hustle.
+                We&apos;ve rebuilt credit assessment from the ground up for the modern worker, using the data that actually defines your hustle.
               </p>
             </div>
 
@@ -204,7 +203,7 @@ export default function LandingPage() {
                 <Spotlight className="h-full bg-background border-primary/10 shadow-[0_10px_40px_rgba(0,102,255,0.05)]">
                   <div className="p-10 flex flex-col justify-center h-full relative z-10">
                     <h3 className="text-3xl md:text-4xl font-heading font-black text-foreground mb-6 leading-tight">
-                      Here's What You Get In Your <br />
+                      Here&apos;s What You Get In Your <br />
                       <span className="text-primary">Free CIBIL Score & Report</span>
                     </h3>
 
@@ -336,8 +335,8 @@ export default function LandingPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1, duration: 0.6 }}
-                  onHoverStart={() => setHoveredPillar(i)}
-                  onHoverEnd={() => setHoveredPillar(null)}
+                  onHoverStart={() => { }}
+                  onHoverEnd={() => { }}
                   className="group"
                 >
                   <div className={`h-full p-1 rounded-[40px] bg-gradient-to-br from-white/60 to-white/10 hover:from-primary/20 hover:to-accent/20 transition-all duration-500 shadow-sm hover:shadow-2xl relative`}>
@@ -411,7 +410,7 @@ export default function LandingPage() {
                       {[1, 2, 3, 4, 5].map(s => <Star key={s} className="w-5 h-5 fill-warning text-warning" />)}
                     </div>
                     <p className="text-gray-600 italic font-bold leading-relaxed text-xl relative">
-                      <span className="absolute -left-6 -top-4 text-6xl text-primary/10 font-black">"</span>
+                      <span className="absolute -left-6 -top-4 text-6xl text-primary/10 font-black">&quot;</span>
                       {t.content}
                     </p>
                   </div>

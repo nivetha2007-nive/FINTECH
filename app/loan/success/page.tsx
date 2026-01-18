@@ -1,22 +1,20 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, Sparkles, TrendingUp, Zap, ArrowRight, Share2, Download, ShieldCheck, User as UserIcon, Smartphone, CreditCard, Briefcase, ChevronLeft } from 'lucide-react';
+import { useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { ShieldCheck, Zap, ArrowRight, Share2, Download } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+
 import { useScoreStore } from '@/lib/store';
 import { useAuthStore } from '@/lib/auth-store';
 import Image from 'next/image';
 
 export default function LoanSuccess() {
-    const router = useRouter();
-    const [showConfetti, setShowConfetti] = useState(true);
     const { total, grade } = useScoreStore();
     const user = useAuthStore((state) => state.user);
 
     useEffect(() => {
-        const confettiTimer = setTimeout(() => setShowConfetti(false), 5000);
+        const confettiTimer = setTimeout(() => { }, 5000);
         return () => clearTimeout(confettiTimer);
     }, []);
 
